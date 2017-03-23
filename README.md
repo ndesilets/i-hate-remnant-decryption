@@ -30,6 +30,11 @@ I am not responsible if your computer explodes or begins growing arms and legs.
 There are certainly faster and more efficient ways to find a solution for this sudoku-like game. 
 A runtime within 4 seconds on a 5x5 grid single-threaded is good enough for me :) 
 
+## Changelog
+
+03/23/17:
+- Added shape constraints for 5x5 grid (derp)
+
 ---
 
 ## Example
