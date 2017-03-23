@@ -3,6 +3,8 @@ import itertools
 import time
 import numpy as np
 
+domain = [1, 2, 3, 4, 5]
+
 ################################################################################
 # Input functions
 ################################################################################
@@ -82,13 +84,21 @@ def get_col_values(grid, j):
 
     return col_values
     
+def get_shape_values(grid, shape_coordinates):
+    values = []
+    for pair in shape_coordinates:
+        i = pair[0]
+        j = pair[1]
+        values.append(grid[i][j])
+
+    return values
+
 ################################################################################
 # Remnant dec. functions
 ################################################################################
 
 def find_constraints(grid):
     size = len(grid)
-    domain = [1, 2, 3, 4, 5]
     constrained_grid = [[[] for x in range(size)] for y in range(size)]
 
     # For each tile 
@@ -123,6 +133,18 @@ def calc_candidate_solutions(grid):
 
 def find_solution(candidates, size):
     num_candidates = len(candidates)
+    shapes_5x5 = [
+        # Center shape (r#,c#) pairs 
+        [[1, 2], [2, 1], [2, 2], [2, 3], [3, 2]],
+        # Top left
+        [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1]],
+        # Top right
+        [[0, 3], [0, 4], [1, 3], [1, 4], [2, 4]],
+        # Bottom right 
+        [[3, 3], [3, 4], [4, 2], [4, 3], [4, 4]],
+        # Bottom left
+        [[2, 0], [3, 0], [3, 1], [4, 0], [4, 1]],
+    ]
 
     # For each potential solution 
     for x in range(num_candidates):
@@ -143,10 +165,21 @@ def find_solution(candidates, size):
                 row_values.pop(j)
                 col_values.pop(i)
 
-                # Apply game rules 
+                # Apply first two rules
                 if tile in row_values or tile in col_values:
                     valid = False
                     break
+                
+                # Apply third rule 
+                if size == 5:
+                    for shape in shapes_5x5:
+                        shape_values = get_shape_values(candidate, shape)
+                        diff = set(domain).difference(set(shape_values))
+
+                        # If shape_values were not all unique
+                        if len(diff) != 0:
+                            valid = False 
+                            break
 
             # Skip solution if invalid 
             if valid is False:
